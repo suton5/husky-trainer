@@ -389,7 +389,6 @@ void Repeat::loadCommands(const std::string filename, std::vector<geometry_msgs:
 	    
             out.push_back(geo_util::stampedTwistOfString(lineBuffer));
         }
-        ROS_INFO("Sujay is hot. 1.");
         commandFile.close();
     }
     else {
@@ -410,7 +409,6 @@ void Repeat::loadPositions(const std::string filename, std::vector<geometry_msgs
 
             out.push_back(geo_util::stampedPoseOfString(lineBuffer));
         }
-	ROS_INFO("Sujay is hot. 2.");
         positionFile.close();
     } else {
         ROS_ERROR_STREAM("Could not open position file: " << filename);
@@ -430,7 +428,6 @@ void Repeat::loadAnchorPoints(const std::string filename, std::vector<AnchorPoin
             out.push_back(AnchorPoint(lineBuffer));
             out.back().loadFromDisk();
         }
-	ROS_INFO("Sujay is hot. 3.");
         anchorPointsFile.close();
     } else {
         ROS_ERROR_STREAM("Could not open anchor points file: " << filename);

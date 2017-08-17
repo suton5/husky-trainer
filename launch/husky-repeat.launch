@@ -15,11 +15,11 @@
 
     <node name="command_repeater" pkg="husky_trainer" type="command_repeater">
         <param name="input" value="/teach_repeat/desired_command" />
-        <param name="output" value="/joy_teleop/cmd_vel" />
+        <param name="output" value="/mobile_base/commands/velocity" />
     </node>
     <node name="repeat_node" pkg="husky_trainer" type="repeat" output="screen">
         <param name="working_directory" value="$(arg working_directory)" />
-        <param name="readings_topic" value="/velodyne_points" />
+        <param name="readings_topic" value="/zed/point_cloud/cloud_registered" />
         <param name="_lambda_x" value="1.0" />
     </node>
 </launch>
