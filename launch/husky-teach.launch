@@ -1,0 +1,22 @@
+
+<launch>
+    <arg name="ap_distance" default="0.1" />
+    <arg name="ap_angle" default="0.01" />
+
+    <include file="/home/ubuntu/catkin_ws/src/zed-ros-wrapper-master/launch/zed.launch" />
+    
+    <node name="cloud_recorder" pkg="husky_trainer" type="teach_cloud_recorder" cwd="node"> 
+      <param name="working_directory" type="str" value="$(env PWD)" />
+      <param name="source" type="str" value="/teach_repeat/anchor_points" />
+      <remap from="velodyne_points" to="/zed/point_cloud/cloud_registered"/>
+    </node>
+
+    <node name="zedtobase_teach" pkg="tf" type="static_transform_publisher" args="0 0 0.5 0 0 0 base_footprint zed_current_frame 100" />
+
+
+    <node name="teach_node" pkg="husky_trainer" type="teach" cwd="node" output="screen">
+      <param name="working_directory" type="str" value="$(env PWD)" />
+      <param name="ap_distance" value="$(arg ap_distance)" />
+      <param name="ap_angle" value="$(arg ap_angle)" />
+    </node>
+</launch>
