@@ -37,11 +37,11 @@
 #define ANGLE_AP_PARAM "ap_angle"
 #define DEFAULT_WORKING_DIRECTORY ""  // current working directory
 
-#define JOYSTICK_TOPIC "/keyop/teleop"
+//#define JOYSTICK_TOPIC "/keyop/teleop"
 #define KEYBOARD_TOPIC "/ypresser"
 #define POINT_CLOUD_TOPIC "/zed/point_cloud/cloud_registered"
 #define POSE_ESTIMATE_TOPIC "/odom"
-#define VEL_TOPIC "/keyop/cmd_vel"
+#define VEL_TOPIC "/mobile_base/commands/velocity"
 #define CLOUD_RECORDER_TOPIC "/teach_repeat/anchor_points"
 
 #define ROBOT_FRAME "/base_footprint"
@@ -52,7 +52,7 @@
 #define DEFAULT_AP_TRIGGER 0.1  // The approx distance we want between every anchor point.
 #define DEFAULT_AP_ANGLE 0.01
 #define LOOP_RATE 100
-//#define L_SEP ","
+#define L_SEP ","
 
 typedef PointMatcher<float> PM;
 
@@ -130,12 +130,12 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr msg)
     double distance_since_ap = geo_util::euclidian_distance_of_poses(lastOdomPosition, poseOfLastAnchor);
     double angle_since_ap = geo_util::angle_between_poses(lastOdomPosition, poseOfLastAnchor);
 
-    ROS_INFO("Travel: %f", distance_since_ap);
-    ROS_INFO("Angle diff: %f", angle_since_ap);
-    ROS_INFO("Angle trigger: %f", angleBetweenAnchorPoints);
+    //ROS_INFO("Travel: %f", distance_since_ap);
+    //ROS_INFO("Angle diff: %f", angle_since_ap);
+    //ROS_INFO("Angle trigger: %f", angleBetweenAnchorPoints);
 
     if(teachingStartTime != ros::Time(0))
-    {
+    {	
         // Check if we traveled enough to get a new cloud.
         if(fabs(distance_since_ap) > distanceBetweenAnchorPoints ||
            fabs(angle_since_ap) > angleBetweenAnchorPoints)
@@ -196,9 +196,8 @@ void velocityCallback(const geometry_msgs::Twist::ConstPtr& msg)
     if(teachingStartTime != ros::Time(0))
     {
         *pSpeedRecord <<
-            boost::lexical_cast<std::string>(
-                    (ros::Time::now() - teachingStartTime).toSec())
-            << "," << msg->linear.x << "," << msg->angular.z << std::endl;
+            boost::lexical_cast<std::string>((ros::Time::now() - teachingStartTime).toSec()) << L_SEP << 
+	    msg->linear.x << L_SEP << msg->angular.z << std::endl;
     }
 }
 
@@ -210,7 +209,7 @@ int main(int argc, char **argv)
 
     n.getParam(WORKING_DIRECTORY_PARAM, workingDirectory);
     n.param<double>(AP_TRIGGER_PARAM, 
-            distanceBetweenAnchorPoints, 
+            distanceBetweenAnchorPoints,
             DEFAULT_AP_TRIGGER);
     n.param<double>(ANGLE_AP_PARAM, angleBetweenAnchorPoints, DEFAULT_AP_ANGLE);
 
@@ -260,6 +259,7 @@ int main(int argc, char **argv)
     positionRecord.close();
     speedRecord.close();
     saveAnchorPointList(anchorPointList);
+
 
     ROS_INFO_STREAM("Recorded " << anchorPointList.size() << " anchor points.");
 
